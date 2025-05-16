@@ -17,6 +17,9 @@ jobs:
         with:
           go-version: "1.23.0"
 
+      - name: Install goose
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
+
       - name: Build app
         run: ./scripts/buildprod.sh
       
@@ -31,5 +34,11 @@ jobs:
       - name: 'Build and upload docker image'
         run: gcloud builds submit --tag us-central1-docker.pkg.dev/deep-tracer-459920-u3/notely-ar-repo/notely:latest . 
 
+      - name: Run Migrations
+        run: ./scripts/migrateup.sh
+
       - name: Deploy to Cloud Run
         run: gcloud run deploy notely --image us-central1-docker.pkg.dev/deep-tracer-459920-u3/notely-ar-repo/notely:latest --region us-central1 --allow-unauthenticated --project deep-tracer-459920-u3 --max-instances=4
+        
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
