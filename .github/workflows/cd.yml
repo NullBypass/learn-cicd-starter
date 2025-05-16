@@ -36,9 +36,9 @@ jobs:
 
       - name: Run Migrations
         run: ./scripts/migrateup.sh
-
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
       - name: Deploy to Cloud Run
         run: gcloud run deploy notely --image us-central1-docker.pkg.dev/deep-tracer-459920-u3/notely-ar-repo/notely:latest --region us-central1 --allow-unauthenticated --project deep-tracer-459920-u3 --max-instances=4
         
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
